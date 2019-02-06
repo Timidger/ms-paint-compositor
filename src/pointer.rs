@@ -25,15 +25,32 @@ impl pointer::Handler for PointerHandler {
     }
 
     #[wlroots_dehandle]
+    fn on_button(&mut self,
+                 compositor_handle: compositor::Handle,
+                 _pointer_handle: pointer::Handle,
+                 event: &pointer::event::Button) {
+        #[dehandle] let compositor = compositor_handle;
+        let state: &mut CompositorState = compositor.downcast();
+        #[dehandle] let cursor = state.cursor_handle.clone();
+        let (x, y) = cursor.coords();
+        state.dirty.push((x as _, y as _));
+        state.drawing = event.state() == wlroots::WLR_BUTTON_PRESSED
+    }
+
+    #[wlroots_dehandle]
     fn on_motion(&mut self,
                  compositor_handle: compositor::Handle,
                  _pointer_handle: pointer::Handle,
                  motion_event: &pointer::event::Motion) {
         #[dehandle] let compositor = compositor_handle;
-        let &mut CompositorState { ref cursor_handle, .. } = compositor.downcast();
+        let &mut CompositorState { ref cursor_handle, ref mut dirty, drawing, .. } = compositor.downcast();
         #[dehandle] let cursor = cursor_handle;
         let (delta_x, delta_y) = motion_event.delta();
         cursor.move_to(None, delta_x, delta_y);
+        let (x, y) = cursor.coords();
+        if drawing {
+            dirty.push((x as _, y as _));
+        }
     }
 }
 

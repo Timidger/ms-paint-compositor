@@ -15,7 +15,9 @@ use crate::{pointer::pointer_added,
 pub struct CompositorState {
     xcursor_manager: wlroots::cursor::xcursor::Manager,
     cursor_handle: wlroots::cursor::Handle,
-    output_layout_handle: wlroots::output::layout::Handle
+    output_layout_handle: wlroots::output::layout::Handle,
+    dirty: Vec<(usize, usize)>,
+    drawing: bool
 }
 
 fn main() {
@@ -27,6 +29,7 @@ fn main() {
         .pointer_added(pointer_added)
         .keyboard_added(keyboard_added);
     let compositor = compositor::Builder::new()
+        .gles2(true)
         .input_manager(input_builder)
         .output_manager(output_builder)
         .build_auto(compositor_state);
@@ -35,6 +38,7 @@ fn main() {
 
 #[wlroots_dehandle]
 pub fn setup_compositor_state() -> CompositorState {
+    let (dirty, drawing) = (vec![], false);
     use wlroots::{cursor::{Cursor, xcursor},
                   output::layout::Layout};
     use crate::{pointer::CursorHandler, output::LayoutHandler};
@@ -48,5 +52,7 @@ pub fn setup_compositor_state() -> CompositorState {
     cursor.attach_output_layout(output_layout);
     CompositorState { xcursor_manager,
                       cursor_handle,
-                      output_layout_handle }
+                      output_layout_handle,
+                      dirty,
+                      drawing }
 }
