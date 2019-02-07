@@ -18,8 +18,8 @@ impl output::Handler for OutputHandler {
         let transform_matrix = output.transform_matrix();
         let renderer = compositor.renderer.as_mut().expect("No renderer");
         let mut renderer = renderer.render(output, None);
-        for (x, y) in state.dirty.drain(..) {
-            let area = Area::new(Origin::new(x as _, y as _), Size::new(1, 1));
+        for (x, y) in &state.dirty {
+            let area = Area::new(Origin::new(*x as _, *y as _), Size::new(1, 1));
             renderer.render_colored_rect(area, [1.0, 1.0, 1.0, 1.0], transform_matrix);
         }
     }

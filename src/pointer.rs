@@ -18,10 +18,20 @@ impl pointer::Handler for PointerHandler {
                           _pointer_handle: pointer::Handle,
                           absolute_motion_event: &pointer::event::AbsoluteMotion) {
         #[dehandle] let compositor = compositor_handle;
-        let &mut CompositorState { ref cursor_handle, .. } = compositor.downcast();
+        let &mut CompositorState { ref cursor_handle,
+                                   ref mut dirty,
+                                   drawing, .. } = compositor.downcast();
         #[dehandle] let cursor = cursor_handle;
         let (x, y) = absolute_motion_event.pos();
-        cursor.warp_absolute(absolute_motion_event.device(), x, y);
+        let (old_x, old_y) = cursor.coords();
+        cursor.warp_absolute(absolute_motion_event.device(), x,  y);
+        let (x, y) = cursor.coords();
+        if !drawing {
+            return
+        }
+        let delta_x = old_x as isize - x as isize;
+        let delta_y = old_y as isize - y as isize;
+        draw(dirty,  (old_x as _, old_y as _), (x as _, y as _), (delta_x, delta_y));
     }
 
     #[wlroots_dehandle]
@@ -46,10 +56,30 @@ impl pointer::Handler for PointerHandler {
         let &mut CompositorState { ref cursor_handle, ref mut dirty, drawing, .. } = compositor.downcast();
         #[dehandle] let cursor = cursor_handle;
         let (delta_x, delta_y) = motion_event.delta();
+        let (old_x, old_y) = cursor.coords();
+        let (old_x, old_y) = (old_x as isize, old_y as isize);
         cursor.move_to(None, delta_x, delta_y);
+        if !drawing {
+            return;
+        }
         let (x, y) = cursor.coords();
-        if drawing {
-            dirty.push((x as _, y as _));
+        let (delta_x, delta_y) = (delta_x as isize, delta_y as isize);
+        let (x, y) = (x as isize, y as isize);
+        draw(dirty, (x, y), (old_x, old_y), (delta_x, delta_y));
+    }
+}
+
+fn draw(dirty: &mut Vec<(usize, usize)>,
+        (x, y): (isize, isize),
+        (mut old_x, mut old_y): (isize, isize),
+        (delta_x, delta_y): (isize, isize)) {
+    while old_x != x || old_y != y {
+        dirty.push(((old_x) as usize, (old_y) as usize));
+        if old_x != x {
+            old_x += if delta_x > 0 {1} else {-1};
+        }
+        if old_y != y {
+            old_y += if delta_y > 0 {1} else {-1};
         }
     }
 }
