@@ -31,7 +31,7 @@ impl pointer::Handler for PointerHandler {
         }
         let delta_x = old_x as isize - x as isize;
         let delta_y = old_y as isize - y as isize;
-        draw(dirty,  (old_x as _, old_y as _), (x as _, y as _), (delta_x, delta_y));
+        draw(dirty, (x as _, y as _), (old_x as _, old_y as _), (delta_x, delta_y));
     }
 
     #[wlroots_dehandle]
@@ -63,15 +63,15 @@ impl pointer::Handler for PointerHandler {
             return;
         }
         let (x, y) = cursor.coords();
-        let (delta_x, delta_y) = (delta_x as isize, delta_y as isize);
+        let (delta_x, delta_y) = (delta_x.round() as isize, delta_y.round() as isize);
         let (x, y) = (x as isize, y as isize);
-        draw(dirty, (x, y), (old_x, old_y), (delta_x, delta_y));
+        draw(dirty, (old_x, old_y), (x, y), (delta_x, delta_y));
     }
 }
 
 fn draw(dirty: &mut Vec<(usize, usize)>,
-        (x, y): (isize, isize),
         (mut old_x, mut old_y): (isize, isize),
+        (x, y): (isize, isize),
         (delta_x, delta_y): (isize, isize)) {
     while old_x != x || old_y != y {
         dirty.push(((old_x) as usize, (old_y) as usize));

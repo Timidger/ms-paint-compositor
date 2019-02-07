@@ -12,7 +12,7 @@ impl output::Handler for OutputHandler {
         #[dehandle] let compositor = compositor_handle;
         #[dehandle] let output = output_handle;
         let state: &mut CompositorState = compositor.data.downcast_mut().unwrap();
-        if state.dirty.is_empty() {
+        if state.dirty.is_empty() || !state.drawing {
             return
         }
         let transform_matrix = output.transform_matrix();
