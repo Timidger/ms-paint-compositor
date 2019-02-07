@@ -57,14 +57,14 @@ impl pointer::Handler for PointerHandler {
         #[dehandle] let cursor = cursor_handle;
         let (delta_x, delta_y) = motion_event.delta();
         let (old_x, old_y) = cursor.coords();
-        let (old_x, old_y) = (old_x as isize, old_y as isize);
+        let (old_x, old_y) = (old_x.round() as isize, old_y.round() as isize);
         cursor.move_to(None, delta_x, delta_y);
         if !drawing {
             return;
         }
         let (x, y) = cursor.coords();
         let (delta_x, delta_y) = (delta_x.round() as isize, delta_y.round() as isize);
-        let (x, y) = (x as isize, y as isize);
+        let (x, y) = (x.round() as isize, y.round() as isize);
         draw(dirty, (old_x, old_y), (x, y), (delta_x, delta_y));
     }
 }
@@ -73,13 +73,16 @@ fn draw(dirty: &mut Vec<(usize, usize)>,
         (mut old_x, mut old_y): (isize, isize),
         (x, y): (isize, isize),
         (delta_x, delta_y): (isize, isize)) {
+    //println!("old: {:?}", (old_x, old_y));
+    //println!("cur: {:?}", (x, y));
+    //println!("delta: {:?}", (delta_x, delta_y));
     while old_x != x || old_y != y {
         dirty.push(((old_x) as usize, (old_y) as usize));
         if old_x != x {
-            old_x += if delta_x > 0 {1} else {-1};
+            old_x += if old_x < x {1} else {-1};
         }
         if old_y != y {
-            old_y += if delta_y > 0 {1} else {-1};
+            old_y += if old_y < y {1} else {-1};
         }
     }
 }
