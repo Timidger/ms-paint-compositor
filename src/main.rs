@@ -29,7 +29,9 @@ fn main() {
         .pointer_added(pointer_added)
         .keyboard_added(keyboard_added);
     let compositor = compositor::Builder::new()
+        .wl_shm(true)
         .gles2(true)
+        .screenshooter(true)
         .input_manager(input_builder)
         .output_manager(output_builder)
         .build_auto(compositor_state);
@@ -44,7 +46,7 @@ pub fn setup_compositor_state() -> CompositorState {
     use crate::{pointer::CursorHandler, output::LayoutHandler};
     let output_layout_handle = Layout::create(Box::new(LayoutHandler));
     let cursor_handle = Cursor::create(Box::new(CursorHandler));
-    let xcursor_manager = xcursor::Manager::create("default".to_string(), 24)
+    let xcursor_manager = xcursor::Manager::create("paint-brush".to_string(), 24)
         .expect("Could not create xcursor manager");
     xcursor_manager.load(1.0);
     #[dehandle] let output_layout = output_layout_handle.clone();

@@ -91,7 +91,7 @@ pub fn pointer_added(compositor_handle: compositor::Handle,
     let CompositorState { ref cursor_handle, ref mut xcursor_manager,
                           .. } = compositor.downcast();
     #[dehandle] let cursor = cursor_handle;
-    xcursor_manager.set_cursor_image("left_ptr".to_string(), cursor);
+    xcursor_manager.set_cursor_image("paint-brush".to_string(), cursor);
     cursor.attach_input_device(pointer.input_device());
     Some(Box::new(PointerHandler) as Box<pointer::Handler>)
 }

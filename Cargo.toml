@@ -7,6 +7,10 @@ repository = "https://github.com/Timidger/ms-paint-compositor"
 keywords = ["Wayland", "compositor", "window", "wlroots", "microsoft"]
 readme = "README.md"
 license = "MIT"
+build = "build.rs"
 
 [dependencies]
-wlroots = { git = "https://github.com/swaywm/wlroots-rs/", features = ["unstable", "static"] }
+wlroots = { path = "../wlroots-rs", features = ["unstable", "static"] }
+
+[build-dependencies]
+fs_extra = "1.0"
