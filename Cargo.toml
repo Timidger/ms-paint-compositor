@@ -11,6 +11,7 @@ build = "build.rs"
 
 [dependencies]
 wlroots = { git = "https://github.com/swaywm/wlroots-rs", features = ["unstable", "static"] }
+rusttype = "0.7"
 
 [build-dependencies]
 fs_extra = "1.0"

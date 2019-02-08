@@ -1,8 +1,10 @@
 extern crate wlroots;
+extern crate rusttype;
 
 mod keyboard;
 mod pointer;
 mod output;
+mod color;
 
 use wlroots::{compositor,
               utils::log::{WLR_DEBUG, init_logging},
@@ -10,14 +12,16 @@ use wlroots::{compositor,
 
 use crate::{pointer::pointer_added,
             keyboard::keyboard_added,
-            output::output_added};
+            output::output_added,
+            color::ColorState};
 
 pub struct CompositorState {
     xcursor_manager: wlroots::cursor::xcursor::Manager,
     cursor_handle: wlroots::cursor::Handle,
     output_layout_handle: wlroots::output::layout::Handle,
     dirty: Vec<(usize, usize)>,
-    drawing: bool
+    drawing: bool,
+    color_state: ColorState
 }
 
 fn main() {
@@ -56,5 +60,7 @@ pub fn setup_compositor_state() -> CompositorState {
                       cursor_handle,
                       output_layout_handle,
                       dirty,
-                      drawing }
+                      drawing,
+                      color_state: ColorState::default()
+    }
 }
