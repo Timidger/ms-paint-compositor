@@ -10,7 +10,7 @@ license = "MIT"
 build = "build.rs"
 
 [dependencies]
-wlroots = { path = "../wlroots-rs", features = ["unstable", "static"] }
+wlroots = { git = "https://github.com/swaywm/wlroots-rs", features = ["unstable", "static"] }
 
 [build-dependencies]
 fs_extra = "1.0"

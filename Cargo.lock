@@ -312,7 +312,7 @@ name = "ms-paint-compositor"
 version = "1.0.0"
 dependencies = [
  "fs_extra 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "wlroots 0.2.4",
+ "wlroots 0.2.4 (git+https://github.com/swaywm/wlroots-rs)",
 ]
 
 [[package]]
@@ -667,18 +667,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "wlroots"
 version = "0.2.4"
+source = "git+https://github.com/swaywm/wlroots-rs#22a6436c667a772cf3ac59fab2a5fd3212ddc93c"
 dependencies = [
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "vsprintf 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "wlroots-dehandle 2.0.0",
- "wlroots-sys 0.2.1",
+ "wlroots-dehandle 2.0.0 (git+https://github.com/swaywm/wlroots-rs)",
+ "wlroots-sys 0.2.1 (git+https://github.com/swaywm/wlroots-rs)",
  "xkbcommon 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "wlroots-dehandle"
 version = "2.0.0"
+source = "git+https://github.com/swaywm/wlroots-rs#22a6436c667a772cf3ac59fab2a5fd3212ddc93c"
 dependencies = [
  "proc-macro2 0.4.27 (registry+https://github.com/rust-lang/crates.io-index)",
  "quote 0.6.11 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -688,6 +690,7 @@ dependencies = [
 [[package]]
 name = "wlroots-sys"
 version = "0.2.1"
+source = "git+https://github.com/swaywm/wlroots-rs#22a6436c667a772cf3ac59fab2a5fd3212ddc93c"
 dependencies = [
  "bindgen 0.30.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.48 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -805,6 +808,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum winapi-build 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "2d315eee3b34aca4797b2da6b13ed88266e6d612562a0c46390af8299fc699bc"
 "checksum winapi-i686-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ac3b87c63620426dd9b991e5ce0329eff545bccbbb34f3be09ff6fb6ab51b7b6"
 "checksum winapi-x86_64-pc-windows-gnu 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
+"checksum wlroots 0.2.4 (git+https://github.com/swaywm/wlroots-rs)" = "<none>"
+"checksum wlroots-dehandle 2.0.0 (git+https://github.com/swaywm/wlroots-rs)" = "<none>"
+"checksum wlroots-sys 0.2.1 (git+https://github.com/swaywm/wlroots-rs)" = "<none>"
 "checksum ws2_32-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "d59cefebd0c892fa2dd6de581e937301d8552cb44489cdff035c6187cb63fa5e"
 "checksum xkbcommon 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "7ac975d685d902d49d5ae9b52dbd217b2accb40ae17ee6e62beec95fafe8c856"
 "checksum xml-rs 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "541b12c998c5b56aa2b4e6f18f03664eef9a4fd0a246a55594efae6cc2d964b5"

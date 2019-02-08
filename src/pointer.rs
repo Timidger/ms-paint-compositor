@@ -56,7 +56,7 @@ impl pointer::Handler for PointerHandler {
         let (delta_x, delta_y) = motion_event.delta();
         let (old_x, old_y) = cursor.coords();
         let (old_x, old_y) = (old_x.round() as isize, old_y.round() as isize);
-        cursor.move_to(None, delta_x, delta_y);
+        cursor.move_relative(None, delta_x, delta_y);
         if !drawing {
             return;
         }
