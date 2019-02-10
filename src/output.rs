@@ -67,8 +67,9 @@ impl OutputHandler {
             Some(index) => index
         };
         let scale = Scale::uniform(32.0);
-        let mut area = Area::new(Origin::new(width / 2, height / 2),
-                                 Size::new(100, 100)); // TODO this number is made up
+        let size = Size::new(100, 100); // TODO this number is made up
+        let mut area = Area::new(Origin::new((width / 2) - (size.width * 4), height / 2),
+                                 size);
         for _ in 0..color_index {
             area.origin.x += area.size.width;
         }
