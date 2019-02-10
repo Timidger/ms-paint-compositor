@@ -48,5 +48,12 @@ impl keyboard::Handler for KeyboardHandler {
                 }
             }
         }
+        let state: &mut CompositorState = compositor.data.downcast_mut().unwrap();
+        state.drawing = true;
+        #[dehandle] let output_layout = state.output_layout_handle;
+        for (output_handle, _) in output_layout.outputs() {
+            #[dehandle] let output = output_handle;
+            output.schedule_frame();
+        }
     }
 }

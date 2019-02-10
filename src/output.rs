@@ -1,5 +1,5 @@
 use wlroots::{area::{Area, Origin, Size},
-              render::{GenericRenderer, matrix},
+              render::{Renderer, matrix},
               wlroots_dehandle, compositor, output};
 use rusttype::{Font, Scale};
 
@@ -26,23 +26,22 @@ impl output::Handler for OutputHandler {
         #[dehandle] let compositor = compositor_handle;
         #[dehandle] let output = output_handle;
         let state: &mut CompositorState = compositor.data.downcast_mut().unwrap();
+        if !state.drawing {
+            state.dirty.drain(..);
+            return
+        }
         let renderer = compositor.renderer.as_mut().expect("No renderer");
-        self.render_drawing(state, output, renderer);
-        self.render_color_change(state, output, renderer);
+        let mut renderer = renderer.render(output, None);
+        self.render_drawing(state, &mut renderer);
+        self.render_color_change(state, &mut renderer);
     }
 }
 
 impl OutputHandler {
     fn render_drawing(&mut self,
                       state: &mut CompositorState,
-                      output: &mut output::Output,
-                      renderer: &mut GenericRenderer) {
-        if !state.drawing {
-            state.dirty.drain(..);
-            return
-        }
-        let transform_matrix = output.transform_matrix();
-        let mut renderer = renderer.render(output, None);
+                      renderer: &mut Renderer) {
+        let transform_matrix = renderer.output.transform_matrix();
         for (x, y) in &state.dirty {
             let area = Area::new(Origin::new(*x as _, *y as _), Size::new(1, 1));
             renderer.render_colored_rect(area, [1.0, 1.0, 1.0, 1.0], transform_matrix);
@@ -51,12 +50,10 @@ impl OutputHandler {
 
     fn render_color_change(&mut self,
                            state: &mut CompositorState,
-                           output: &mut output::Output,
-                           renderer: &mut GenericRenderer) {
-        let transform_matrix = output.transform_matrix();
-        let transform_inverted = output.get_transform().invert();
-        let (width, height) = output.effective_resolution();
-        let mut renderer = renderer.render(output, None);
+                           renderer: &mut Renderer) {
+        let transform_matrix = renderer.output.transform_matrix();
+        let transform_inverted = renderer.output.get_transform().invert();
+        let (width, height) = renderer.output.effective_resolution();
         let color_state = &mut state.color_state;
         let color = match color_state.editing_color.as_ref() {
             None => return,
@@ -66,6 +63,7 @@ impl OutputHandler {
             None => return,
             Some(index) => index
         };
+        state.drawing = false;
         let scale = Scale::uniform(32.0);
         let size = Size::new(100, 100); // TODO this number is made up
         let mut area = Area::new(Origin::new((width / 2) - (size.width * 4), height / 2),
@@ -73,6 +71,7 @@ impl OutputHandler {
         for _ in 0..color_index {
             area.origin.x += area.size.width;
         }
+        println!("Rendering {}", color.as_str().get(color_index..).unwrap());
         let v_metrics = self.font.v_metrics(scale);
         // layout the glyphs in a line with 5 pixel padding
         let glyphs: Vec<_> = self.font
@@ -94,6 +93,7 @@ impl OutputHandler {
         };
         // Loop through the glyphs in the text, positing each one on a line
         for glyph in glyphs {
+            println!("rendering a glyph @ {:#?}", area);
             // Draw the glyph into the image per-pixel by using the draw closure
             let mut bytes = vec![0u8; (glyphs_width * 4 * glyphs_height) as usize];
             glyph.draw(|x, y, v| {
@@ -112,7 +112,7 @@ impl OutputHandler {
                                              transform_inverted,
                                              0.0,
                                              transform_matrix);
-            area.origin.x += area.size.width / 2 ;
+            area.origin.x += area.size.width;
             renderer.render_texture_with_matrix(&texture, matrix);
         }
     }
