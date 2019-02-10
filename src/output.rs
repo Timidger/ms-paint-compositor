@@ -58,17 +58,26 @@ impl OutputHandler {
         let (width, height) = output.effective_resolution();
         let mut renderer = renderer.render(output, None);
         let color_state = &mut state.color_state;
-        let color = match color_state.editing_color.as_mut() {
+        let color = match color_state.editing_color.as_ref() {
             None => return,
             Some(color) => color
         };
+        let color_index = match color_state.index.take() {
+            None => return,
+            Some(index) => index
+        };
         let scale = Scale::uniform(32.0);
         let mut area = Area::new(Origin::new(width / 2, height / 2),
-                             Size::new(100, 100)); // TODO this number is made up
+                                 Size::new(100, 100)); // TODO this number is made up
+        for _ in 0..color_index {
+            area.origin.x += area.size.width;
+        }
         let v_metrics = self.font.v_metrics(scale);
         // layout the glyphs in a line with 5 pixel padding
         let glyphs: Vec<_> = self.font
-            .layout(color.as_str(), scale, rusttype::point(5.0, 5.0 + v_metrics.ascent))
+            .layout(color.as_str().get(color_index..).unwrap(),
+                    scale,
+                    rusttype::point(5.0, 5.0 + v_metrics.ascent))
             .collect();
         let glyphs_height = (v_metrics.ascent - v_metrics.descent).ceil() as u32;
         let glyphs_width = {

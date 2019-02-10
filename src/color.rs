@@ -21,6 +21,7 @@ impl Into<[f32; 4]> for Color {
 #[derive(Debug, Default)]
 pub struct ColorState {
     pub editing_color: Option<String>,
+    pub index: Option<usize>,
     pub color: Color
 }
 
@@ -39,9 +40,15 @@ impl ColorState {
             keysyms::KEY_d => 'd',
             keysyms::KEY_e => 'e',
             keysyms::KEY_f => 'f',
-            // TODO Delete
             _ => return
         };
+        if color.len() >= 7 {
+            return
+        }
+        if self.index.is_none() {
+            self.index = Some(color.len());
+        }
         color.push(number)
+
     }
 }

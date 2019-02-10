@@ -20,6 +20,9 @@ impl keyboard::Handler for KeyboardHandler {
               _keyboard_handle: keyboard::Handle,
               key_event: &keyboard::event::Key) {
         #[dehandle] let compositor = compositor_handle;
+        if key_event.key_state() == wlroots::WLR_KEY_RELEASED {
+            return
+        }
         for key in key_event.pressed_keys() {
             match key {
                 keysyms::KEY_Escape => {
@@ -37,6 +40,7 @@ impl keyboard::Handler for KeyboardHandler {
                         continue
                     }
                     state.color_state.editing_color = Some("#".into());
+                    state.color_state.index = Some(0);
                 }
                 k => {
                     let state: &mut CompositorState = compositor.data.downcast_mut().unwrap();
